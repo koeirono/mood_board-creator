@@ -709,6 +709,7 @@ class SelectionDialog(tk.Toplevel):
         self.selected_doc = self.docs[idx[0]]
         self.destroy()
 
+
 class BoardSelectionDialog(tk.Toplevel):
     def __init__(self, parent, docs, title="Select board"):
         super().__init__(parent)
