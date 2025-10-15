@@ -47,18 +47,22 @@ def make_thumbnail(pil_img: Image.Image, size=(180, 130)):
 class MoodBoardApp(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.option_add("Font", "Segoe UI 22")
         self.title("MoodBoard Maker")
-        self.geometry("1100x720")
+        self.geometry("1360x760")
         self.minsize(1000, 650)
-        self.configure(bg="#f3f4f6")
+        self.configure(bg="#ffffff")
+        
         self.style = ttk.Style(self)
         try:
             self.style.theme_use("clam")
         except Exception:
             pass
-        self.style.configure("TFrame", background="#f3f4f6")
+        self.style.configure("TFrame", background="#ffffff")
         self.style.configure("Card.TFrame", background="#ffffff")
-        self.style.configure("Title.TLabel", font=("Segoe UI", 16, "bold"), background="#f3f4f6")
+        self.style.configure("Title.TLabel", font=("Segoe UI", 16
+                                                   
+                                                   , "bold"), background="#ffffff")
         self.current_user = None
         self.current_image_path = None
         self.current_original_image = None
@@ -104,14 +108,14 @@ class LandingPage(ttk.Frame):
         wrap.place(relx=0.5, rely=0.48, anchor="center")
         title = ttk.Label(wrap, text="MoodBoard Maker", font=("Segoe UI", 24, "bold"))
         title.pack(pady=(0, 8))
-        subtitle = ttk.Label(wrap, text="Create and save beautiful mood boards", font=("Segoe UI", 12))
+        subtitle = ttk.Label(wrap, text="Create and save beautiful mood boards", font=("Segoe UI", 18))
         subtitle.pack(pady=(0, 16))
         btns = ttk.Frame(wrap)
         btns.pack(fill="x", pady=8)
         ttk.Button(btns, text="Get Started", command=lambda: controller.show_page("LoginPage")).pack(side="left", padx=6, ipadx=6)
         ttk.Button(btns, text="About", command=self.show_about).pack(side="left", padx=6, ipadx=6)
         ttk.Button(btns, text="Exit", command=self.controller.destroy).pack(side="left", padx=6, ipadx=6)
-        footer = ttk.Label(self, text="Tip: Create a free account to save boards to the cloud", font=("Segoe UI", 9))
+        footer = ttk.Label(self, text="Tip: Create a free account to save boards to the cloud", font=("Segoe UI", 14))
         footer.place(relx=0.5, rely=0.92, anchor="center")
 
     def show_about(self):
@@ -190,7 +194,7 @@ class DashboardPage(ttk.Frame):
         body.pack(fill="both", expand=True, padx=12, pady=10)
         card = Card(body, padding=16)
         card.pack(fill="x")
-        self.welcome = ttk.Label(card, text="", font=("Segoe UI", 12))
+        self.welcome = ttk.Label(card, text="", font=("Segoe UI", 18))
         self.welcome.pack()
         tips_card = Card(body, padding=12)
         tips_card.pack(fill="both", expand=True, pady=12)
@@ -332,7 +336,7 @@ class GalleryPage(ttk.Frame):
         header.pack(fill="x", padx=12, pady=6)
         ttk.Button(header, text="Back", command=lambda: controller.show_page("DashboardPage")).pack(side="left")
         ttk.Label(header, text="My Gallery", style="Title.TLabel").pack(side="left", padx=12)
-        self.canvas = tk.Canvas(self, bg="#f3f4f6", highlightthickness=0)
+        self.canvas = tk.Canvas(self, bg="#FFFFFF", highlightthickness=0)
         self.canvas.pack(fill="both", expand=True, padx=12, pady=8)
         self._tk_thumbs = []
 
@@ -360,7 +364,7 @@ class GalleryPage(ttk.Frame):
                 self._tk_thumbs.append(tkimg)
                 rect = self.canvas.create_rectangle(x-6, y-6, x+thumb_w+6, y+thumb_h+36, fill="#ffffff", outline="#e5e7eb")
                 img_id = self.canvas.create_image(x, y, anchor="nw", image=tkimg)
-                self.canvas.create_text(x+4, y+thumb_h+10, anchor="nw", text=os.path.basename(path), font=("Segoe UI", 9))
+                self.canvas.create_text(x+4, y+thumb_h+10, anchor="nw", text=os.path.basename(path), font=("Segoe UI", 14))
                 self.canvas.tag_bind(img_id, "<Button-1>", lambda ev, p=path: self.preview_image(p))
                 x += thumb_w + pad
                 if x + thumb_w > self.winfo_width() - 60:
@@ -407,6 +411,7 @@ class MoodBoardPage(ttk.Frame):
     def __init__(self, parent, controller: MoodBoardApp):
         super().__init__(parent)
         self.controller = controller
+
         header = ttk.Frame(self)
         header.pack(fill="x", padx=12, pady=8)
         ttk.Button(header, text="Back", command=lambda: controller.show_page("DashboardPage")).pack(side="left", padx=6)
@@ -418,30 +423,32 @@ class MoodBoardPage(ttk.Frame):
         ttk.Button(btns, text="Load Board", command=self.load_board_dialog).pack(side="left", padx=4)
         ttk.Button(btns, text="Save Board", command=self.save_board).pack(side="left", padx=4)
         ttk.Button(btns, text="Clear Canvas", command=self.clear_canvas).pack(side="left", padx=4)
+        ttk.Button(btns, text="Delete Image", command=self.delete_selected_image).pack(side="left", padx=4)
+
         left = ttk.Frame(self)
         left.pack(side="left", fill="y", padx=(12,6), pady=8)
-        ttk.Label(left, text="Your Boards", font=("Segoe UI", 11, "bold")).pack(anchor="w", pady=(0,6))
+        ttk.Label(left, text="Your Boards", font=("Segoe UI", 12, "bold")).pack(anchor="w", pady=(0,6))
         self.boards_list = tk.Listbox(left, width=28, height=18)
         self.boards_list.pack(fill="y")
         self.boards_list.bind("<<ListboxSelect>>", self.on_board_select)
         ttk.Button(left, text="Delete Board", command=self.delete_selected_board).pack(pady=(8,0))
+
         self.canvas_frame = ttk.Frame(self)
         self.canvas_frame.pack(side="left", fill="both", expand=True, padx=(6,12), pady=8)
-        self.canvas = tk.Canvas(self.canvas_frame, bg="#ffffff", highlightthickness=1, highlightbackground="#d1d5db")
+        self.canvas = tk.Canvas(self.canvas_frame, bg="#ffffff", highlightthickness=0, highlightbackground="#ffffff")
         self.canvas.pack(fill="both", expand=True)
         self.canvas.update()
         self.canvas.bind("<Button-1>", self.on_canvas_click)
         self.canvas.bind("<B1-Motion>", self.on_canvas_drag)
         self.canvas.bind("<ButtonRelease-1>", self.on_canvas_release)
-        self.board_items = []
-        self._tk_images = []
+
         self.selected_item = None
         self.drag_offset = (0, 0)
+        self.board_items = []
+        self._tk_images = []
         self.current_board = None
         self.refresh_board_list()
 
-    def on_show(self):
-        self.refresh_board_list()
 
     def refresh_board_list(self):
         self.boards_list.delete(0, tk.END)
@@ -462,13 +469,8 @@ class MoodBoardPage(ttk.Frame):
         name = simpledialog.askstring("New Board", "Enter board name:")
         if not name:
             return
-        doc = {
-            "username": username,
-            "board_name": name,
-            "layout": [],
-            "saved_at": datetime.utcnow()
-        }
-        res = boards_col.insert_one(doc)
+        doc = {"username": username, "board_name": name, "layout": [], "saved_at": datetime.utcnow()}
+        boards_col.insert_one(doc)
         messagebox.showinfo("Created", f"Board '{name}' created.")
         self.refresh_board_list()
 
@@ -503,6 +505,7 @@ class MoodBoardPage(ttk.Frame):
             self.refresh_board_list()
             if hasattr(self, "_board_docs") and self._board_docs:
                 self.current_board = self._board_docs[0].get("board_name")
+
         choice = messagebox.askquestion("Image source", "Load from your saved uploads? (No = choose a file from disk)")
         if choice == "yes":
             username = self.controller.current_user
@@ -520,16 +523,20 @@ class MoodBoardPage(ttk.Frame):
             path = filedialog.askopenfilename(title="Select an image", filetypes=[("Image files", "*.png *.jpg *.jpeg *.bmp *.gif")])
             if not path:
                 return
+
         try:
             pil = Image.open(path).convert("RGBA")
         except Exception as e:
             messagebox.showerror("Error", f"Can't open image: {e}")
             return
+
         pil.thumbnail((300, 300))
         tkimg = ImageTk.PhotoImage(pil)
         self._tk_images.append(tkimg)
         x, y = 40 + len(self.board_items)*10, 40 + len(self.board_items)*10
-        item = self.canvas.create_image(x, y, anchor="nw", image=tkimg)
+        item = self.canvas.create_image(x, y, anchor="nw", image=tkimg, tags=("image_item",))
+        self.canvas.tag_bind(item, "<Button-1>", self.on_canvas_click)
+
         meta = {"id": item, "path": path, "x": x, "y": y, "w": pil.width, "h": pil.height, "tk": tkimg}
         self.board_items.append(meta)
         if not self.current_board:
@@ -540,15 +547,23 @@ class MoodBoardPage(ttk.Frame):
         items = self.canvas.find_overlapping(event.x, event.y, event.x, event.y)
         if not items:
             self.selected_item = None
+            self.canvas.delete("highlight")
             return
         top = items[-1]
-        for meta in self.board_items:
-            if meta["id"] == top:
-                self.selected_item = meta
-                coords = self.canvas.coords(meta["id"])
-                self.drag_offset = (event.x - coords[0], event.y - coords[1])
-                self.canvas.tag_raise(meta["id"])
-                break
+        found = next((meta for meta in self.board_items if meta["id"] == top), None)
+        if not found:
+            self.selected_item = None
+            self.canvas.delete("highlight")
+            return
+
+        self.selected_item = found
+        coords = self.canvas.coords(found["id"])
+        self.drag_offset = (event.x - coords[0], event.y - coords[1])
+        self.canvas.tag_raise(found["id"])
+        self.canvas.delete("highlight")
+        x, y = coords
+        w, h = found["w"], found["h"]
+        self.canvas.create_rectangle(x-2, y-2, x+w+2, y+h+2, outline="red", width=2, tags="highlight")
 
     def on_canvas_drag(self, event):
         if not self.selected_item:
@@ -560,7 +575,23 @@ class MoodBoardPage(ttk.Frame):
         self.selected_item["y"] = dy
 
     def on_canvas_release(self, event):
-        self.selected_item = None
+        pass
+
+    def delete_selected_image(self):
+        if not self.selected_item:
+            messagebox.showwarning("No Selection", "Click an image to select it first.")
+            return
+        img_id = self.selected_item["id"]
+        if self.canvas.find_withtag(img_id):
+            self.canvas.delete(img_id)
+            self.board_items = [meta for meta in self.board_items if meta["id"] != img_id]
+            self.selected_item = None
+            self.canvas.delete("highlight")
+            messagebox.showinfo("Deleted", "Image removed from board.")
+        else:
+            messagebox.showerror("Error", "Image not found on the board.")
+            self.selected_item = None
+
 
     def save_board(self):
         if not self.current_board:
@@ -570,6 +601,7 @@ class MoodBoardPage(ttk.Frame):
         if not username:
             messagebox.showerror("Error", "Login first")
             return
+
         layout = []
         for meta in self.board_items:
             coords = self.canvas.coords(meta["id"])
@@ -581,6 +613,7 @@ class MoodBoardPage(ttk.Frame):
                 "w": int(meta.get("w", 100)),
                 "h": int(meta.get("h", 100))
             })
+
         boards_col.update_one(
             {"username": username, "board_name": self.current_board},
             {"$set": {"username": username, "board_name": self.current_board, "layout": layout, "saved_at": datetime.utcnow()}},
@@ -636,6 +669,7 @@ class MoodBoardPage(ttk.Frame):
         self._tk_images.clear()
         self.selected_item = None
 
+
 class ProfilePage(ttk.Frame):
     def __init__(self, parent, controller: MoodBoardApp):
         super().__init__(parent)
@@ -646,8 +680,9 @@ class ProfilePage(ttk.Frame):
         ttk.Label(header, text="Profile", style="Title.TLabel").pack(side="left", padx=12)
         self.card = Card(self, padding=14)
         self.card.pack(padx=12, pady=12, fill="x")
-        ttk.Label(self.card, text="User details", font=("Segoe UI", 11, "bold")).pack(anchor="w")
-        self.info_label = ttk.Label(self.card, text="", font=("Segoe UI", 10))
+        ttk.Label(self.card, text="User details", font=("Segoe UI", 14
+                                                        , "bold")).pack(anchor="w")
+        self.info_label = ttk.Label(self.card, text="", font=("Segoe UI", 12))
         self.info_label.pack(anchor="w", pady=(6,0))
 
     def on_show(self):
@@ -662,7 +697,7 @@ class SelectionDialog(tk.Toplevel):
         super().__init__(parent)
         self.title(title)
         self.selected_doc = None
-        self.geometry("540x400")
+        self.geometry("1100x720")
         self.transient(parent)
         self.grab_set()
         left = ttk.Frame(self)
@@ -715,10 +750,10 @@ class BoardSelectionDialog(tk.Toplevel):
         super().__init__(parent)
         self.title(title)
         self.selected_doc = None
-        self.geometry("480x360")
+        self.geometry("1100x720")
         self.transient(parent)
         self.grab_set()
-        lbl = ttk.Label(self, text="Select a board to load", font=("Segoe UI", 11, "bold"))
+        lbl = ttk.Label(self, text="Select a board to load", font=("Segoe UI", 13, "bold"))
         lbl.pack(pady=8)
         self.listbox = tk.Listbox(self, width=60, height=12)
         self.listbox.pack(padx=8, pady=8)
